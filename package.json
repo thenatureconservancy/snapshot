@@ -1,0 +1,46 @@
+{
+  "name": "snapshot",
+  "version": "1.0.0",
+  "description": "web app for exploring projects across space and time",
+  "main": "src/js/main.js",
+  "scripts": {
+    "build-dev": "watchify src/main.js -o build/bundle.js",
+    "build-prod": "test",
+    "watch": "browser-sync start --server --files='build/*.html, build/*.css, build/*.js'",
+    "uglify-js": "",
+    "clean-css": "purifycss build/bundle.js src/css/cad-app.css src/css/bootstrap.css --min --info --out src/dist/index.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thenatureconservancy/snapshot.git"
+  },
+  "keywords": [
+    "tnc",
+    "projects",
+    "tnc",
+    "lands",
+    "conservation"
+  ],
+  "author": "Dan Majka",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thenatureconservancy/snapshot/issues"
+  },
+  "homepage": "https://github.com/thenatureconservancy/snapshot#readme",
+  "dependencies": {
+    "bootflat": "^2.0.4",
+    "bootstrap": "^3.3.6",
+    "jquery": "^2.2.1",
+    "leaflet-hash": "^0.2.1",
+    "leaflet-markercluster": "^0.2.0",
+    "leaflet-minimap": "^3.1.1",
+    "leaflet-omnivore": "^0.3.2",
+    "lodash": "^4.6.1",
+    "mapbox.js": "^2.4.0",
+    "moment": "^2.12.0",
+    "nouislider": "^8.3.0",
+    "ractive": "^0.7.3",
+    "select2": "^4.0.2",
+    "turf": "^2.0.2"
+  }
+}

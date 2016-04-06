@@ -4,11 +4,14 @@
   "description": "web app for exploring projects across space and time",
   "main": "src/js/main.js",
   "scripts": {
-    "build-dev": "watchify src/main.js -o build/bundle.js",
-    "build-prod": "test",
+    "clean": "rm -r dist/*",
     "watch": "browser-sync start --server --files='build/*.html, build/*.css, build/*.js'",
-    "uglify-js": "",
-    "clean-css": "purifycss build/bundle.js src/css/cad-app.css src/css/bootstrap.css --min --info --out src/dist/index.css"
+    "uglify-js": "uglifyjs build/bundle.js -o build/bundle.min.js",
+    "build:js": "watchify src/main.js -o build/bundle.js",
+    "build:css:dev": "cat node_modules/bootstrap/dist/css/bootstrap.css node_modules/bootflat/bootflat/css/bootflat.css node_modules/mapbox.js/theme/style.css | cleancss -o build/vendor.min.css",
+    "build:css:prod": "purifycss build/bundle.js src/css/cad-app.css src/css/bootstrap.css --min --info --out build/css-vendor.css",
+    "build:prod": "npm run build:css && npm run uglify-js",
+    "build:dev": "watchify src/pt/pt-app.js -o build/pt/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -30,6 +33,9 @@
   "dependencies": {
     "bootflat": "^2.0.4",
     "bootstrap": "^3.3.6",
+    "chartist": "^0.9.7",
+    "clean-css": "^3.4.11",
+    "hashmark": "^3.1.0",
     "jquery": "^2.2.1",
     "leaflet-hash": "^0.2.1",
     "leaflet-markercluster": "^0.2.0",
@@ -41,6 +47,7 @@
     "nouislider": "^8.3.0",
     "ractive": "^0.7.3",
     "select2": "^4.0.2",
-    "turf": "^2.0.2"
+    "turf": "^2.0.2",
+    "turf-within": "^1.0.1"
   }
 }

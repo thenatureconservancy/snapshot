@@ -201,7 +201,7 @@ function showPopup (ractive, markerLayerGroup) {
     var markers = ractive.get('derivedData.combinedMarkersInBounds');
     var projectDetails = _.find(markers, {'unique_id': event.node.id });                    
     ractive.set('appstate.mapPopup', projectDetails);
-    TNC.events.mapHighlight({'unique_id': projectDetails.unique_id, 'dataname': projectDetails.dataname}, markerLayerGroup);    
+    mapHighlight({'unique_id': projectDetails.unique_id, 'dataname': projectDetails.dataname}, markerLayerGroup);    
   });
 };
 
@@ -304,7 +304,7 @@ function sectionChange (ractive) {
     var buttonid = event.node.id;
     ractive.set('appstate.activeTab', buttonid);
     if (buttonid === 'button-summary') {
-      TNC.graph.histogram(ractive, 'inputData.tnclands.markers.inBounds', 'derivedData', 'date_year', ['gis_ac']);
+      TNC.graph.buildHistogram(ractive, 'inputData.tnclands.markers.inBounds', 'derivedData', 'date_year', ['gis_ac']);
     }
 
   });    

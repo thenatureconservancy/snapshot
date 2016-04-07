@@ -4,7 +4,6 @@ window.$ = window.jQuery = require('jquery');
 var bootstrap = require('bootstrap'); 
 //var bootflat = require('bootflat');
 
-// leaflet plugins
 // require('leaflet.markercluster');
 //var miniMap = require('leaflet-minimap'); //currently having probs requiring this.
 
@@ -12,8 +11,6 @@ var _ = require('lodash');
 var moment = require('moment');
 var select2 = require('select2');
 var turf = require('turf-within');
-
-
 
 // app modules
 var TNC = {};
@@ -139,29 +136,29 @@ TNC.app = ractive({
     },
 
     lookupProjectsByYear: function(projectsByYear, year) {
-      var projects = ractive.get('derivedData.byYear');
+      var projects = this.get('derivedData.byYear');
     	return projects[year];
     },
 
     uniqueYears: function () {
-	    var markersInBounds = _.orderBy(ractive.get('derivedData.combinedMarkersInBounds'), ['date_n'],['desc']);
+	    var markersInBounds = _.orderBy(this.get('derivedData.combinedMarkersInBounds'), ['date_n'],['desc']);
 	    var uniqueYears = _.uniq(_.map(markersInBounds, 'date_year'));
 	    if (uniqueYears[0] === 'Invalid date') {
 	      uniqueYears.push(uniqueYears.shift());      
 	    }
-	    ractive.set('derivedData.timelineYears', uniqueYears);
+	    this.set('derivedData.timelineYears', uniqueYears);
 	    return uniqueYears;
     },
 
     projectsByYear: function () {
-  		ractive.set('derivedData.byYear', _.groupBy(markersInBounds, 'date_year'));
+  		this.set('derivedData.byYear', _.groupBy(markersInBounds, 'date_year'));
     },
 
     paginateProjects: function() {
     	// returns an array of unique years from all markers in map bounds
     	// Get all markers in bounds and sort them in descending order
-    	var pageIndex = ractive.get('appstate.detailsPageIndex');
-	    var markersInBounds = _.orderBy(ractive.get('derivedData.combinedMarkersInBounds'), ['date_n'],['desc']);
+    	var pageIndex = this.get('appstate.detailsPageIndex');
+	    var markersInBounds = _.orderBy(this.get('derivedData.combinedMarkersInBounds'), ['date_n'],['desc']);
 	    // Markers w/ 'Invalid date' get stuck at top. Need to remove these in a separate array
 	    var invalidMarkers = _.filter(markersInBounds, function(o){return o.date_year === 'Invalid date'});
 	    var datedMarkers = _.filter(markersInBounds, function(o){return o.date_year !== 'Invalid date'});
@@ -172,10 +169,10 @@ TNC.app = ractive({
 	    // Get list of unique years in sliced array and add 
 			var uniqueYears = _.uniq(_.map(slicedMarkers, 'date_year'));
 			//console.log(uniqueYears);
-	    ractive.set('derivedData.timelineYears', uniqueYears);
+	    this.set('derivedData.timelineYears', uniqueYears);
 	    // Break out projects into an object w/ year: [Array of projects]
 	    var groupedProjects = _.groupBy(slicedMarkers, 'date_year');
-	    ractive.set('derivedData.byYear', groupedProjects);
+	    this.set('derivedData.byYear', groupedProjects);
 	    //console.log(groupedProjects);
 	    return groupedProjects;
     },
@@ -244,16 +241,16 @@ TNC.init = function () {
 TNC.init();
 
 TNC.app.decorators.select2 = function ( node ) {
-    var ractive = this;
-    
-    $(node).select2().on( 'change', function () {
-        ractive.updateModel();
-    });
-    
-    return {
-        teardown: function () {
-            $(node).select2( 'destroy' );
-        }
-    };
+  var ractive = this;
+  
+  $(node).select2().on( 'change', function () {
+    ractive.updateModel();
+  });
+  
+  return {
+    teardown: function () {
+      $(node).select2( 'destroy' );
+    }
+  };
 };
 

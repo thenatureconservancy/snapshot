@@ -303,9 +303,9 @@ function onMapUpdate (map, ractive, markerLayerGroup){
 
 
 module.exports = {
-	setupMap : setupMap,
-	loadMarkers : loadMarkers,
-	updateMarkersTurf : updateMarkersTurf,
+  setupMap : setupMap,
+  loadMarkers : loadMarkers,
+  updateMarkersTurf : updateMarkersTurf,
   createClusters: createClusters,
   fitLayerGroupBounds: fitLayerGroupBounds,
   sumColumnValues: sumColumnValues,

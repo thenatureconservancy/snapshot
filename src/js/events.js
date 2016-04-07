@@ -1,3 +1,4 @@
+var omnivore = require('leaflet-omnivore');
 TNC = {};
 TNC.map = require('./map.js');
 TNC.graph = require('./graph.js');
@@ -222,7 +223,7 @@ function mapHighlight (markerInfo, markerLayerGroup) {
 };
 
 
-function showFootprintOnClick (map, projectOverlayGroup) {
+function showFootprintOnClick (ractive, map, projectOverlayGroup) {
   function showFootprint (projectInfo) {
     var dataset = projectInfo.dataname;
     // overlay table field 
@@ -238,8 +239,7 @@ function showFootprintOnClick (map, projectOverlayGroup) {
     cartoDbOverlay.on('ready', function() {
       projectOverlayGroup.clearLayers();
       cartoDbOverlay.id = 'projectOverlay';
-      cartoDbOverlay.setStyle({color: '#'+overlayColor, weight: 1.5, fillColor: '#'+overlayColor, fillOpacity: 0.1});
-      //cartoDbOverlay.setStyle({color: 'green', weight: 1.5, fillColor: 'green', fillOpacity: 0.1});       
+      cartoDbOverlay.setStyle({color: '#'+overlayColor, weight: 1.5, fillColor: '#'+overlayColor, fillOpacity: 0.1});      
       cartoDbOverlay.addTo(projectOverlayGroup);
       map.fitBounds(cartoDbOverlay.getBounds(), {padding: [120, 100]}); // might get goofy w/ small screen size? Could I make this responsive?  // , {padding: [150, 150]}
     });       

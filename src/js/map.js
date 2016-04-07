@@ -2,6 +2,7 @@ var mapbox = require('mapbox.js');
 var moment = require('moment');
 var omnivore = require('leaflet-omnivore');
 require('leaflet-hash');
+var turfWithin = require('turf-within');
 
 
 function setupMap (config) {
@@ -108,7 +109,7 @@ function updateMarkersTurf (map, ractive, markerLayerGroup, turfOverlayLayerGrou
         function turfIntersect(points, overlay) {
           var geoJsonPts = points.getGeoJSON();
           var overlayGeojson = overlay.getGeoJSON();
-          var ptsWithin = turf.within(geoJsonPts, overlayGeojson);
+          var ptsWithin = turfWithin(geoJsonPts, overlayGeojson);
           var featureLayer = L.mapbox.featureLayer(ptsWithin); // converts from geojson to feature layer
           featureLayer.setFilter(function(f) {
             if (queryString === '') {

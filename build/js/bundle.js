@@ -77359,6 +77359,7 @@ module.exports = {
 
 
 },{}],66:[function(require,module,exports){
+var omnivore = require('leaflet-omnivore');
 TNC = {};
 TNC.map = require('./map.js');
 TNC.graph = require('./graph.js');
@@ -77583,7 +77584,7 @@ function mapHighlight (markerInfo, markerLayerGroup) {
 };
 
 
-function showFootprintOnClick (map, projectOverlayGroup) {
+function showFootprintOnClick (ractive, map, projectOverlayGroup) {
   function showFootprint (projectInfo) {
     var dataset = projectInfo.dataname;
     // overlay table field 
@@ -77599,8 +77600,7 @@ function showFootprintOnClick (map, projectOverlayGroup) {
     cartoDbOverlay.on('ready', function() {
       projectOverlayGroup.clearLayers();
       cartoDbOverlay.id = 'projectOverlay';
-      cartoDbOverlay.setStyle({color: '#'+overlayColor, weight: 1.5, fillColor: '#'+overlayColor, fillOpacity: 0.1});
-      //cartoDbOverlay.setStyle({color: 'green', weight: 1.5, fillColor: 'green', fillOpacity: 0.1});       
+      cartoDbOverlay.setStyle({color: '#'+overlayColor, weight: 1.5, fillColor: '#'+overlayColor, fillOpacity: 0.1});      
       cartoDbOverlay.addTo(projectOverlayGroup);
       map.fitBounds(cartoDbOverlay.getBounds(), {padding: [120, 100]}); // might get goofy w/ small screen size? Could I make this responsive?  // , {padding: [150, 150]}
     });       
@@ -77764,7 +77764,7 @@ module.exports = {
 	pageUpdate: pageUpdate
 }
 
-},{"./config.js":65,"./graph.js":68,"./map.js":70}],67:[function(require,module,exports){
+},{"./config.js":65,"./graph.js":68,"./map.js":70,"leaflet-omnivore":17}],67:[function(require,module,exports){
 var noUiSlider = require('nouislider');
 
 function buildSelect (lyr, id, fieldArray) {
@@ -77983,7 +77983,7 @@ var bootstrap = require('bootstrap');
 var _ = require('lodash');
 var moment = require('moment');
 var select2 = require('select2');
-var turf = require('turf-within');
+
 
 // app modules
 var TNC = {};
@@ -78181,10 +78181,10 @@ TNC.init = function () {
 			projectOverlayGroup,
 			turfOverlayGroup,
 			markerLayerGroup;
-
+  // L.mapbox.accessToken = mapboxToken;
   map = TNC.map.setupMap({center: [23, -93], zoom: 3, token: mapboxToken});
-  //osm2 = new L.mapbox.tileLayer('mapbox.streets', {minZoom: 0, maxZoom: 7});
-  //miniMap = new L.Control.MiniMap(osm2).addTo(map);
+  // osm2 = new L.mapbox.tileLayer('mapbox.streets', {minZoom: 0, maxZoom: 7});
+  // miniMap = new L.Control.MiniMap(osm2).addTo(map);
   projectOverlayLayerGroup = new L.FeatureGroup();
   turfOverlayLayerGroup = new L.FeatureGroup();  
   projectOverlayLayerGroup.addTo(map);
@@ -78198,7 +78198,7 @@ TNC.init = function () {
   TNC.events.showDetails(TNC.app);
   TNC.events.showDetailsFromPopup(map, TNC.app);  
   TNC.events.showPopup(TNC.app, markerLayerGroup);
-  // TNC.events.showFootprintOnClick(map, projectOverlayLayerGroup);  // FLAGGING THIS  
+  TNC.events.showFootprintOnClick(TNC.app, map, projectOverlayLayerGroup);  // FLAGGING THIS  
   TNC.events.getSpatialExtentLayer(TNC.app, 'spatial-select', 'spatial-select-options');
   TNC.events.sectionChange(TNC.app);
   TNC.events.pageUpdate(TNC.app); 
@@ -78228,11 +78228,12 @@ TNC.app.decorators.select2 = function ( node ) {
 };
 
 
-},{"./config.js":65,"./events.js":66,"./filter.js":67,"./graph.js":68,"./map.js":70,"./util.js":71,"bootstrap":1,"jquery":15,"lodash":26,"mapbox.js":43,"moment":58,"ractive":60,"select2":61,"turf-within":62}],70:[function(require,module,exports){
+},{"./config.js":65,"./events.js":66,"./filter.js":67,"./graph.js":68,"./map.js":70,"./util.js":71,"bootstrap":1,"jquery":15,"lodash":26,"mapbox.js":43,"moment":58,"ractive":60,"select2":61}],70:[function(require,module,exports){
 var mapbox = require('mapbox.js');
 var moment = require('moment');
 var omnivore = require('leaflet-omnivore');
 require('leaflet-hash');
+var turfWithin = require('turf-within');
 
 
 function setupMap (config) {
@@ -78339,7 +78340,7 @@ function updateMarkersTurf (map, ractive, markerLayerGroup, turfOverlayLayerGrou
         function turfIntersect(points, overlay) {
           var geoJsonPts = points.getGeoJSON();
           var overlayGeojson = overlay.getGeoJSON();
-          var ptsWithin = turf.within(geoJsonPts, overlayGeojson);
+          var ptsWithin = turfWithin(geoJsonPts, overlayGeojson);
           var featureLayer = L.mapbox.featureLayer(ptsWithin); // converts from geojson to feature layer
           featureLayer.setFilter(function(f) {
             if (queryString === '') {
@@ -78543,7 +78544,7 @@ module.exports = {
   sumMultipleColumnValues: sumMultipleColumnValues,
   onMapUpdate: onMapUpdate
 }
-},{"leaflet-hash":16,"leaflet-omnivore":17,"mapbox.js":43,"moment":58}],71:[function(require,module,exports){
+},{"leaflet-hash":16,"leaflet-omnivore":17,"mapbox.js":43,"moment":58,"turf-within":62}],71:[function(require,module,exports){
 
   function uiConfig () {
     $(".btn-group > .btn").click(function(){

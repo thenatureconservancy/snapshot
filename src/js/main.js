@@ -10,7 +10,7 @@ var bootstrap = require('bootstrap');
 var _ = require('lodash');
 var moment = require('moment');
 var select2 = require('select2');
-var turf = require('turf-within');
+
 
 // app modules
 var TNC = {};
@@ -208,10 +208,10 @@ TNC.init = function () {
 			projectOverlayGroup,
 			turfOverlayGroup,
 			markerLayerGroup;
-
+  // L.mapbox.accessToken = mapboxToken;
   map = TNC.map.setupMap({center: [23, -93], zoom: 3, token: mapboxToken});
-  //osm2 = new L.mapbox.tileLayer('mapbox.streets', {minZoom: 0, maxZoom: 7});
-  //miniMap = new L.Control.MiniMap(osm2).addTo(map);
+  // osm2 = new L.mapbox.tileLayer('mapbox.streets', {minZoom: 0, maxZoom: 7});
+  // miniMap = new L.Control.MiniMap(osm2).addTo(map);
   projectOverlayLayerGroup = new L.FeatureGroup();
   turfOverlayLayerGroup = new L.FeatureGroup();  
   projectOverlayLayerGroup.addTo(map);
@@ -225,7 +225,7 @@ TNC.init = function () {
   TNC.events.showDetails(TNC.app);
   TNC.events.showDetailsFromPopup(map, TNC.app);  
   TNC.events.showPopup(TNC.app, markerLayerGroup);
-  // TNC.events.showFootprintOnClick(map, projectOverlayLayerGroup);  // FLAGGING THIS  
+  TNC.events.showFootprintOnClick(TNC.app, map, projectOverlayLayerGroup);  // FLAGGING THIS  
   TNC.events.getSpatialExtentLayer(TNC.app, 'spatial-select', 'spatial-select-options');
   TNC.events.sectionChange(TNC.app);
   TNC.events.pageUpdate(TNC.app); 

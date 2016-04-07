@@ -5,13 +5,13 @@
   "main": "src/js/main.js",
   "scripts": {
     "clean": "rm -r dist/*",
-    "watch": "browser-sync start --server --files='build/*.html, build/*.css, build/*.js'",
-    "uglify-js": "uglifyjs build/bundle.js -o build/bundle.min.js",
+    "watch": "browser-sync start --server --files='build/*.html, build/css/*.css, build/js/*.js'",
+    "uglify-js": "uglifyjs build/js/bundle.js -o build/js/bundle.min.js",
     "build:js": "watchify src/main.js -o build/bundle.js",
     "build:css:dev": "cat node_modules/bootstrap/dist/css/bootstrap.css node_modules/bootflat/bootflat/css/bootflat.css node_modules/mapbox.js/theme/style.css | cleancss -o build/vendor.min.css",
     "build:css:prod": "purifycss build/bundle.js src/css/cad-app.css src/css/bootstrap.css --min --info --out build/css-vendor.css",
     "build:prod": "npm run build:css && npm run uglify-js",
-    "build:dev": "watchify src/pt/pt-app.js -o build/pt/bundle.js"
+    "build:dev": "watchify src/js/main.js -o build/js/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -41,6 +41,7 @@
     "leaflet-markercluster": "^0.2.0",
     "leaflet-minimap": "^3.1.1",
     "leaflet-omnivore": "^0.3.2",
+    "leaflet.markercluster": "git+https://github.com/Leaflet/Leaflet.markercluster.git#v1.0.0-beta.2.0",
     "lodash": "^4.6.1",
     "mapbox.js": "^2.4.0",
     "moment": "^2.12.0",

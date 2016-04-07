@@ -8,19 +8,19 @@
     <link rel="icon" href="../../favicon.ico">
     <title>Snapshot - The Nature Conservancy</title>
 		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,800,700,400italic|Open+Sans+Condensed:700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" media="all">
-    <link rel="stylesheet" href="css/bootflat.css"> 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" media="all">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootflat/2.0.4/css/bootflat.min.css"> 
        
     <link rel='stylesheet' href='https://api.tiles.mapbox.com/mapbox.js/v2.4.0/mapbox.css' media="all"/>
 		<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css' rel='stylesheet' />
 		<link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css' rel='stylesheet' /> 
-    <link rel="stylesheet" href="lib/Control.MiniMap.min.css">
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox.js/plugins/leaflet-minimap/v1.0.0/Control.MiniMap.css">
 
-    <link rel="stylesheet" href="lib/noUiSlider/distribute/nouislider.min.css" media="all">
-    <link rel="stylesheet" href="lib/select2.min.css">
-    <link rel="stylesheet" href="lib/chartist.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/8.3.0/nouislider.min.css" media="all">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chartist/0.9.7/chartist.min.css">
 
     <link rel="stylesheet" href="css/snapshot.css" media="all">
 
@@ -275,79 +275,35 @@
           {{/appstate.activeDetails}}
         {{/if}}
         </div> <!-- End tabpanel -->
-
       </div> <!-- End results-content --> 
 
 {{/if}}
 
 
 {{#if appstate.projectScope === 'active'}}
-
-<div id="results-content" class="tab-content">
-
-{{#fundraising:i}}
-<div class="card-summary-active">
-  <h3>{{ProjectName}}</h3>
-  <p>{{ProjectBriefDescription}}</p>
-  <ul>
-    <li><strong>Project Keywords:</strong> {{#ProjectKeyword}}{{this}}, {{/ProjectKeyword}}</li>
-  </ul>
-
-</div>
-
-{{/fundraising}}
-
-</div>
-
-
+	<div id="results-content" class="tab-content">
+		{{#fundraising:i}}
+			<div class="card-summary-active">
+			  <h3>{{ProjectName}}</h3>
+			  <p>{{ProjectBriefDescription}}</p>
+			  <ul>
+			    <li><strong>Project Keywords:</strong> {{#ProjectKeyword}}{{this}}, {{/ProjectKeyword}}</li>
+			  </ul>
+			</div>
+		{{/fundraising}}
+	</div>
 {{/if}}
-
-
-
 
     </script> <!-- End template -->
     </div> <!-- End results -->
-
-
-
   </div> <!-- End row -->
-
 </div> <!-- End main -->
 
 <div class="container-fluid footer" >
   <p>© 2015 The Nature Conservancy - <a href="http://www.nature.org/about-us/governance/terms-of-use/index.htm?src=f9">Legal Disclosure</a> - <a href="http://www.nature.org/about-us/governance/privacy-policy.xml?src=f6">Privacy</a></p>
 </div>
 
-
-
-
-
-
-<!-- Javascript -->
-  <script type="text/javascript" src="js/config.js"></script>
-
-  <script src="//api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.0/turf.min.js"></script>
-  <script src='https://api.tiles.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
-  <script src="lib/leaflet.marker.cluster.mod.js"></script>  
-  <script src="lib/leaflet-omnivore.min.js"></script>
-  <script src="lib/Control.MiniMap.min.js"></script> 
-  <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-hash/v0.2.1/leaflet-hash.js'></script>
-
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="lib/select2.min2.js"></script>
-  <script type="text/javascript" src="lib/noUiSlider/distribute/nouislider.min.js"></script>
-	<script src='http://cdn.ractivejs.org/latest/ractive.min.js'></script>
-  <script type="text/javascript" src="lib/chartist.min.js"></script>   
-  <script type="text/javascript" src="lib/lodash.min.js"></script>   
-  <script type="text/javascript" src="lib/moment.min.js"></script> 
-
-  <script type="text/javascript" src="js/filter.js"></script>
-  <script type="text/javascript" src="js/util.js"></script>
-  <script type="text/javascript" src="js/map.js"></script>
-  <script type="text/javascript" src="js/graph.js"></script>
-  <script type="text/javascript" src="js/events.js"></script>   
-  <script type="text/javascript" src="js/app-ractive.js"></script>
-
+<script type="text/javascript" src="js/bundle.js"></script>
+<script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js'></script>
 </body>
 </html>

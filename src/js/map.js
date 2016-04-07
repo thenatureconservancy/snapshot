@@ -22,177 +22,43 @@ function setupMap (config) {
 };
 
 
-function loadMarkers (inputData, map, ractive) {
-  // loop through inputs and load into ractive
-  var markerLayerGroup = new L.FeatureGroup();
-  markerLayerGroup.addTo(map);
-  for (var key in inputData) {
-    loadData(inputData[key]);          
-  }
+function _changeIcon(layer, inputDataset) {
+  layer.setIcon(L.mapbox.marker.icon({
+    'marker-symbol': inputDataset.markerOptions.markerIcon,
+    'marker-color': inputDataset.markerOptions.markerColor,
+    'marker-size': 'small'}
+    ));        
+} 
 
-  markerLayerGroup.clearLayers();
-  return markerLayerGroup;
 
-  function loadData(inputDataset) {
-    var ptdata = inputDataset.src;
-    var dataName = inputDataset.shortName;
-    var points = omnivore[inputDataset.datatype](ptdata, null, L.mapbox.featureLayer(), {
-      }).on('ready', function() {
-        points.eachLayer(addPopups);
-        points.eachLayer(changeIcon);         
-        ractive.set('inputData.'+inputDataset.shortName+'.markers.complete', points);
-        // create marker cluster, add pts to marker cluster, add marker cluster to layer group
-        var markerCluster = createClusters(inputDataset);
-    		markerCluster.id = dataName;
-		    markerCluster.addLayer(points);
-		    markerLayerGroup.addLayer(markerCluster);
-        map.panBy([1,1]); //kludge to trigger inBounds and auto-populate templates.   
+function _addPopups(layer, inputDataset) {
+  var feature = layer.toGeoJSON(),
+      popupTemplate = inputDataset.template.popup;
 
-      }).on('error', function(error){
-        console.log(error);
-      });
-
-      function addPopups(layer) {
-        var feature = layer.toGeoJSON();
-        var inDateField = inputDataset.fields.date;
-        var inDateFormatting = inputDataset.fields.dateFormat;
-        var inDataShortName = inputDataset.shortName;
-        var inUniqueID = inputDataset.fields.uniqueID;
-        var popupTemplate = inputDataset.template.popup;
-
-        if (feature.properties && feature.properties[inputDataset.popupfield]) {
-          layer.bindPopup(popupTemplate(feature));
-        }
-
-        feature.properties.dataname = dataName;          
-        feature.properties.date_n = moment(feature.properties[inDateField], inDateFormatting).format('YYYY-MM-DD');
-        feature.properties.date_short = moment(feature.properties[inDateField], inDateFormatting).format('MMM DD');
-        if (feature.properties[inDateField]) {
-        	feature.properties.date_year = moment(feature.properties[inDateField], inDateFormatting).format('YYYY');
-        } else {
-        	feature.properties.date_year = 'Invalid date';
-        }
-
-        feature.properties.unique_id = dataName + feature.properties[inUniqueID].toString();                    
-      }
-
-      function changeIcon(layer) {
-        layer.setIcon(L.mapbox.marker.icon({
-          'marker-symbol': inputDataset.markerOptions.markerIcon,
-          'marker-color': inputDataset.markerOptions.markerColor,
-          'marker-size': 'small'}
-          ));        
-      }         
-
-  }
+  if (feature.properties && feature.properties[inputDataset.popupfield]) {
+    layer.bindPopup(popupTemplate(feature));
+  }                   
 };
 
 
-function updateMarkersTurf (map, ractive, markerLayerGroup, turfOverlayLayerGroup, queryString, spatialQueryString) {
-	if (spatialQueryString) {
-    var cartoDbOverlay = omnivore.geojson(spatialQueryString, null, L.mapbox.featureLayer());
-    cartoDbOverlay.on('ready', function() {
-			markerLayerGroup.clearLayers();
-			turfOverlayLayerGroup.clearLayers();
-			cartoDbOverlay.id = 'cartoDbOverlay';
-			cartoDbOverlay.setStyle({color: '#4D5557', weight: 1.5, fillColor: '#4D5557', fillOpacity: 0.1});
-			cartoDbOverlay.addTo(turfOverlayLayerGroup);
+function _normalizeAttributes(layer, inputDataset) {
+  var feature = layer.toGeoJSON(),
+      dataName = inputDataset.shortName,  
+      inDateField = inputDataset.fields.date,
+      inDateFormatting = inputDataset.fields.dateFormat,
+      inDataShortName = inputDataset.shortName,
+      inUniqueID = inputDataset.fields.uniqueID;
 
-      for (var key in ractive.get('inputData')) {
-        var markerCluster = createClusters(ractive.get('inputData.'+[key]));
-        markerCluster.id = [key][0];
-        var points = ractive.get('inputData.'+[key]+'.markers.complete');
-                    
-        turfIntersect(points, cartoDbOverlay);
-        map.fitBounds(turfOverlayLayerGroup.getBounds());
+  feature.properties.dataname = dataName;          
+  feature.properties.date_n = moment(feature.properties[inDateField], inDateFormatting).format('YYYY-MM-DD');
+  feature.properties.date_short = moment(feature.properties[inDateField], inDateFormatting).format('MMM DD');
+  if (feature.properties[inDateField]) {
+    feature.properties.date_year = moment(feature.properties[inDateField], inDateFormatting).format('YYYY');
+  } else {
+    feature.properties.date_year = 'Invalid date';
+  }
 
-        function turfIntersect(points, overlay) {
-          var geoJsonPts = points.getGeoJSON();
-          var overlayGeojson = overlay.getGeoJSON();
-          var ptsWithin = turfWithin(geoJsonPts, overlayGeojson);
-          var featureLayer = L.mapbox.featureLayer(ptsWithin); // converts from geojson to feature layer
-          featureLayer.setFilter(function(f) {
-            if (queryString === '') {
-              return true;
-            } else {
-              return eval(queryString);
-            }
-          });    
-          featureLayer.eachLayer(addPopups);
-          featureLayer.eachLayer(changeIcon);
-          markerLayerGroup.addLayer(markerCluster);
-          markerCluster.addLayer(featureLayer);
-        	           
-          TNC.map.onMapUpdate(map, ractive, markerLayerGroup);
-          return featureLayer;        
-        }
-
-        function changeIcon(layer) {
-          var options = ractive.get('inputData.'+[key]);
-          layer.setIcon(L.mapbox.marker.icon({
-            'marker-symbol': options.markerOptions.markerIcon,
-            'marker-color': options.markerOptions.markerColor,
-            'marker-size': 'small'}
-            ));        
-        }
-
-        function addPopups(layer) {
-          var options = ractive.get('inputData.'+[key]);
-          var feature = layer.toGeoJSON();
-          //console.log(feature.properties);
-          var popupTemplate = options.template.popup;
-          if (feature.properties && feature.properties[options.popupfield]) {
-          		layer.bindPopup(popupTemplate(feature));
-          }
-        }
-
-      } // end for loop
-      //map.fitBounds(markerLayerGroup.getBounds());
-    })
-	} else {
-
-  markerLayerGroup.clearLayers();
-  turfOverlayLayerGroup.clearLayers();
-
-  for (var key in ractive.get('inputData')) {
-    var markerCluster = TNC.map.createClusters(ractive.get('inputData.'+[key]));
-    markerCluster.id = [key][0];
-    var points = ractive.get('inputData.'+[key]+'.markers.complete');
-
-    points.setFilter(function(f) {
-	    if (queryString) {
-	    	return eval(queryString);
-	    } else {
-	      return true;		      
-	    }
-    });
-
-    points.eachLayer(addPopups);
-    points.eachLayer(changeIcon);
-    markerLayerGroup.addLayer(markerCluster);
-    markerCluster.addLayer(points);
-
-    function changeIcon(layer) {
-      var options = ractive.get('inputData.'+[key]);
-      layer.setIcon(L.mapbox.marker.icon({
-        'marker-symbol': options.markerOptions.markerIcon,
-        'marker-color': options.markerOptions.markerColor,
-        'marker-size': 'small'}
-        ));        
-    }
-
-    function addPopups(layer) {
-      var options = ractive.get('inputData.'+[key]);
-      var feature = layer.toGeoJSON();
-          var popupTemplate = options.template.popup;
-          if (feature.properties && feature.properties[options.popupfield]) {
-          		layer.bindPopup(popupTemplate(feature));
-          }
-    }
-  } // end for loop
-	}
-
-  TNC.map.onMapUpdate(map, ractive, markerLayerGroup); // pushes new markers inBounds to display arrays    
+  feature.properties.unique_id = dataName + feature.properties[inUniqueID].toString(); 
 };
 
 
@@ -225,6 +91,156 @@ function createClusters (inputDataset) {
   });
   return markerCluster;
 };
+
+
+
+function loadMarkers (inputData, map, ractive) {
+  var markerLayerGroup = new L.FeatureGroup();
+  markerLayerGroup.addTo(map);
+
+  function _loadData(inputDataset) {
+    var ptdata = inputDataset.src;
+    var dataName = inputDataset.shortName;
+    var points = omnivore[inputDataset.datatype](ptdata, null, L.mapbox.featureLayer(), {
+      }).on('ready', function() {
+        points.eachLayer(function(layer) {
+          _addPopups(layer, inputDataset);
+          _changeIcon (layer, inputDataset);
+          _normalizeAttributes (layer, inputDataset);
+        });
+        
+        ractive.set('inputData.'+inputDataset.shortName+'.markers.complete', points);
+        // create marker cluster, add pts to marker cluster, add marker cluster to layer group
+        var markerCluster = createClusters(inputDataset);
+        markerCluster.id = dataName;
+        markerCluster.addLayer(points);
+        markerLayerGroup.addLayer(markerCluster);
+        map.panBy([1,1]); //kludge to trigger inBounds and auto-populate templates.   
+
+      }).on('error', function(error){
+        console.log(error);
+      });   
+  };
+
+  for (var key in inputData) {
+    _loadData(inputData[key]);
+  }
+
+  markerLayerGroup.clearLayers();
+  return markerLayerGroup;
+};
+
+
+
+function updateMarkersTurf (map, ractive, markerLayerGroup, turfOverlayLayerGroup, queryString, spatialQueryString) {
+	if (spatialQueryString) {
+    var cartoDbOverlay = omnivore.geojson(spatialQueryString, null, L.mapbox.featureLayer());
+    cartoDbOverlay.on('ready', function() {
+			markerLayerGroup.clearLayers();
+			turfOverlayLayerGroup.clearLayers();
+			cartoDbOverlay.id = 'cartoDbOverlay';
+			cartoDbOverlay.setStyle({color: '#4D5557', weight: 1.5, fillColor: '#4D5557', fillOpacity: 0.1});
+			cartoDbOverlay.addTo(turfOverlayLayerGroup);
+
+      for (var key in ractive.get('inputData')) {
+        var markerCluster = createClusters(ractive.get('inputData.'+[key]));
+        markerCluster.id = [key][0];
+        var points = ractive.get('inputData.'+[key]+'.markers.complete');
+                    
+        turfIntersect(points, cartoDbOverlay);
+        map.fitBounds(turfOverlayLayerGroup.getBounds());
+
+        function turfIntersect(points, overlay) {
+          var geoJsonPts = points.getGeoJSON();
+          var overlayGeojson = overlay.getGeoJSON();
+          var ptsWithin = turfWithin(geoJsonPts, overlayGeojson);
+          var featureLayer = L.mapbox.featureLayer(ptsWithin); // converts from geojson to feature layer
+          featureLayer.setFilter(function(f) {
+            if (queryString === '') {
+              return true;
+            } else {
+              return eval(queryString);
+            }
+          });
+
+          featureLayer.eachLayer(addPopups);
+          featureLayer.eachLayer(changeIcon);
+
+          markerLayerGroup.addLayer(markerCluster);
+          markerCluster.addLayer(featureLayer);
+        	           
+          TNC.map.onMapUpdate(map, ractive, markerLayerGroup);
+          return featureLayer;        
+        }
+
+        function changeIcon(layer) {
+          var options = ractive.get('inputData.'+[key]);
+          layer.setIcon(L.mapbox.marker.icon({
+            'marker-symbol': options.markerOptions.markerIcon,
+            'marker-color': options.markerOptions.markerColor,
+            'marker-size': 'small'}
+            ));        
+        }
+
+        function addPopups(layer) {
+          var options = ractive.get('inputData.'+[key]);
+          var feature = layer.toGeoJSON();
+          var popupTemplate = options.template.popup;
+          if (feature.properties && feature.properties[options.popupfield]) {
+          		layer.bindPopup(popupTemplate(feature));
+          }
+        }
+
+      } // end for loop
+      //map.fitBounds(markerLayerGroup.getBounds());
+    })
+	} else {
+
+  markerLayerGroup.clearLayers();
+  turfOverlayLayerGroup.clearLayers();
+
+  for (var key in ractive.get('inputData')) {
+    var markerCluster = TNC.map.createClusters(ractive.get('inputData.'+[key]));
+    markerCluster.id = [key][0];
+    var points = ractive.get('inputData.'+[key]+'.markers.complete');
+
+    points.setFilter(function(f) {
+	    if (queryString) {
+	    	return eval(queryString);
+	    } else {
+	      return true;		      
+	    }
+    });
+
+    points.eachLayer(addPopups);
+    points.eachLayer(changeIcon);
+
+    markerLayerGroup.addLayer(markerCluster);
+    markerCluster.addLayer(points);
+
+    function changeIcon(layer) {
+      var options = ractive.get('inputData.'+[key]);
+      layer.setIcon(L.mapbox.marker.icon({
+        'marker-symbol': options.markerOptions.markerIcon,
+        'marker-color': options.markerOptions.markerColor,
+        'marker-size': 'small'}
+        ));        
+    }
+
+    function addPopups(layer) {
+      var options = ractive.get('inputData.'+[key]);
+      var feature = layer.toGeoJSON();
+          var popupTemplate = options.template.popup;
+          if (feature.properties && feature.properties[options.popupfield]) {
+          		layer.bindPopup(popupTemplate(feature));
+          }
+    }
+  } // end for loop
+	}
+
+  TNC.map.onMapUpdate(map, ractive, markerLayerGroup); // pushes new markers inBounds to display arrays    
+};
+
 
 
 function fitLayerGroupBounds (layerGroup) {

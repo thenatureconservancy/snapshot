@@ -7,7 +7,6 @@
     "clean": "rm -r dist/*",
     "watch": "browser-sync start --server --files='build/*.html, build/css/*.css, build/js/*.js'",
     "uglify-js": "uglifyjs build/js/bundle.js -o build/js/bundle.min.js",
-    "build:js": "watchify src/main.js -o build/bundle.js",
     "build:css:dev": "cat node_modules/bootstrap/dist/css/bootstrap.css node_modules/bootflat/bootflat/css/bootflat.css node_modules/mapbox.js/theme/style.css | cleancss -o build/vendor.min.css",
     "build:css:prod": "purifycss build/bundle.js src/css/cad-app.css src/css/bootstrap.css --min --info --out build/css-vendor.css",
     "build:prod": "npm run build:css && npm run uglify-js",

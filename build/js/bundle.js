@@ -77987,9 +77987,10 @@ var select2 = require('select2');
 
 // app modules
 var TNC = {};
-TNC.config = require('./config.js');
 TNC.map = require('./map.js');
-TNC.filter = require('./filter.js');
+TNC.config = require('./config.js');
+
+TNC.filter = require('./filter.js'); 
 TNC.events = require('./events.js');
 TNC.graph = require('./graph.js');
 TNC.util = require('./util.js');
@@ -78362,7 +78363,6 @@ function loadMarkers (inputData, map, ractive) {
 };
 
 
-
 function updateMarkersTurf (map, ractive, markerLayerGroup, turfOverlayLayerGroup, queryString, spatialQueryString) {
 	if (spatialQueryString) {
     var cartoDbOverlay = omnivore.geojson(spatialQueryString, null, L.mapbox.featureLayer());
@@ -78374,14 +78374,15 @@ function updateMarkersTurf (map, ractive, markerLayerGroup, turfOverlayLayerGrou
 			cartoDbOverlay.addTo(turfOverlayLayerGroup);
 
       for (var key in ractive.get('inputData')) {
+        var points = ractive.get('inputData.'+[key]+'.markers.complete');        
         var markerCluster = createClusters(ractive.get('inputData.'+[key]));
+        var inputDataset = ractive.get('inputData.'+[key]);
         markerCluster.id = [key][0];
-        var points = ractive.get('inputData.'+[key]+'.markers.complete');
                     
-        turfIntersect(points, cartoDbOverlay);
+        turfIntersect(inputDataset, points, cartoDbOverlay);
         map.fitBounds(turfOverlayLayerGroup.getBounds());
 
-        function turfIntersect(points, overlay) {
+        function turfIntersect(inputDataset, points, overlay) {
           var geoJsonPts = points.getGeoJSON();
           var overlayGeojson = overlay.getGeoJSON();
           var ptsWithin = turfWithin(geoJsonPts, overlayGeojson);
@@ -78394,8 +78395,11 @@ function updateMarkersTurf (map, ractive, markerLayerGroup, turfOverlayLayerGrou
             }
           });
 
-          featureLayer.eachLayer(addPopups);
-          featureLayer.eachLayer(changeIcon);
+          featureLayer.eachLayer(function(layer) {
+            _addPopups(layer, inputDataset);
+            _changeIcon (layer, inputDataset);
+            _normalizeAttributes (layer, inputDataset);
+          });
 
           markerLayerGroup.addLayer(markerCluster);
           markerCluster.addLayer(featureLayer);
@@ -78403,25 +78407,6 @@ function updateMarkersTurf (map, ractive, markerLayerGroup, turfOverlayLayerGrou
           TNC.map.onMapUpdate(map, ractive, markerLayerGroup);
           return featureLayer;        
         }
-
-        function changeIcon(layer) {
-          var options = ractive.get('inputData.'+[key]);
-          layer.setIcon(L.mapbox.marker.icon({
-            'marker-symbol': options.markerOptions.markerIcon,
-            'marker-color': options.markerOptions.markerColor,
-            'marker-size': 'small'}
-            ));        
-        }
-
-        function addPopups(layer) {
-          var options = ractive.get('inputData.'+[key]);
-          var feature = layer.toGeoJSON();
-          var popupTemplate = options.template.popup;
-          if (feature.properties && feature.properties[options.popupfield]) {
-          		layer.bindPopup(popupTemplate(feature));
-          }
-        }
-
       } // end for loop
       //map.fitBounds(markerLayerGroup.getBounds());
     })
@@ -78431,9 +78416,10 @@ function updateMarkersTurf (map, ractive, markerLayerGroup, turfOverlayLayerGrou
   turfOverlayLayerGroup.clearLayers();
 
   for (var key in ractive.get('inputData')) {
+    var inputDataset = ractive.get('inputData.'+[key]);
     var markerCluster = TNC.map.createClusters(ractive.get('inputData.'+[key]));
+    var points = ractive.get('inputData.'+[key]+'.markers.complete');    
     markerCluster.id = [key][0];
-    var points = ractive.get('inputData.'+[key]+'.markers.complete');
 
     points.setFilter(function(f) {
 	    if (queryString) {
@@ -78443,29 +78429,15 @@ function updateMarkersTurf (map, ractive, markerLayerGroup, turfOverlayLayerGrou
 	    }
     });
 
-    points.eachLayer(addPopups);
-    points.eachLayer(changeIcon);
+    points.eachLayer(function(layer) {
+      _addPopups(layer, inputDataset);
+      _changeIcon (layer, inputDataset);
+      _normalizeAttributes (layer, inputDataset);
+    });
 
     markerLayerGroup.addLayer(markerCluster);
     markerCluster.addLayer(points);
 
-    function changeIcon(layer) {
-      var options = ractive.get('inputData.'+[key]);
-      layer.setIcon(L.mapbox.marker.icon({
-        'marker-symbol': options.markerOptions.markerIcon,
-        'marker-color': options.markerOptions.markerColor,
-        'marker-size': 'small'}
-        ));        
-    }
-
-    function addPopups(layer) {
-      var options = ractive.get('inputData.'+[key]);
-      var feature = layer.toGeoJSON();
-          var popupTemplate = options.template.popup;
-          if (feature.properties && feature.properties[options.popupfield]) {
-          		layer.bindPopup(popupTemplate(feature));
-          }
-    }
   } // end for loop
 	}
 
@@ -78546,7 +78518,6 @@ function onMapUpdate (map, ractive, markerLayerGroup){
     return inBounds;
   }
 };
-
 
 
 

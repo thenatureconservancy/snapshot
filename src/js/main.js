@@ -14,9 +14,10 @@ var select2 = require('select2');
 
 // app modules
 var TNC = {};
-TNC.config = require('./config.js');
 TNC.map = require('./map.js');
-TNC.filter = require('./filter.js');
+TNC.config = require('./config.js');
+
+TNC.filter = require('./filter.js'); 
 TNC.events = require('./events.js');
 TNC.graph = require('./graph.js');
 TNC.util = require('./util.js');

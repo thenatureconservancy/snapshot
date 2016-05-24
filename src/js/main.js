@@ -234,7 +234,7 @@ TNC.init = function () {
   TNC.events.onMapMove(map, TNC.app, markerLayerGroup, turfOverlayLayerGroup);
   TNC.events.resetFilter(map, TNC.app, markerLayerGroup, turfOverlayLayerGroup);
   TNC.events.changeUnits(TNC.app);
-  // TNC.events.changeData(TNC.app);
+  TNC.events.changeData(TNC.app);
   TNC.graph.buildHistogram(TNC.app, 'inputData.tnclands.markers.inBounds', 'derivedData', 'date_year', ['gis_ac']);
   //TNC.events.popupOnScroll(); 
 };

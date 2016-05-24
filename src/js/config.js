@@ -20,6 +20,30 @@ var spatialOverlay = {
     label: 'Select Congressional Districts',
     name: 'Congressional Districts'
   },
+  tnc_ecoregions_terrestrial: {
+    table: 'tnc_ecoregions_terrestrial',
+    field: 'eco_name',
+    label: 'Select terrestrial ecoregion',
+    name: 'ecoregion(s)'
+  },
+  tnc_ecoregions_marine: {
+    table: 'tnc_ecoregions_marine',
+    field: 'ecoregion',
+    label: 'Select marine ecoregion',
+    name: 'ecoregion(s)'
+  },
+  tnc_ecoregions_freshwater: {
+    table: 'tnc_ecoregions_freshwater',
+    field: 'ecoregion',
+    label: 'Select freshwater ecoregion',
+    name: 'ecoregion(s)'
+  },
+  wri_world_basins: {
+    table: 'wri_world_basins',
+    field: 'name',
+    label: 'Select basin',
+    name: 'basin(s)'
+  },
   whole_systems: {
     table: 'whole_systems',
     field: 'name',

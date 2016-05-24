@@ -2,7 +2,7 @@ var mapbox = require('mapbox.js');
 var moment = require('moment');
 var omnivore = require('leaflet-omnivore');
 require('leaflet-hash');
-var turfWithin = require('turf-within');
+var turfWithin = require('turf-within'); 
 
 
 function setupMap (config) {

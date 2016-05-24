@@ -76869,6 +76869,30 @@ var spatialOverlay = {
     label: 'Select Congressional Districts',
     name: 'Congressional Districts'
   },
+  tnc_ecoregions_terrestrial: {
+    table: 'tnc_ecoregions_terrestrial',
+    field: 'eco_name',
+    label: 'Select terrestrial ecoregion',
+    name: 'ecoregion(s)'
+  },
+  tnc_ecoregions_marine: {
+    table: 'tnc_ecoregions_marine',
+    field: 'ecoregion',
+    label: 'Select marine ecoregion',
+    name: 'ecoregion(s)'
+  },
+  tnc_ecoregions_freshwater: {
+    table: 'tnc_ecoregions_freshwater',
+    field: 'ecoregion',
+    label: 'Select freshwater ecoregion',
+    name: 'ecoregion(s)'
+  },
+  wri_world_basins: {
+    table: 'wri_world_basins',
+    field: 'name',
+    label: 'Select basin',
+    name: 'basin(s)'
+  },
   whole_systems: {
     table: 'whole_systems',
     field: 'name',
@@ -78207,7 +78231,7 @@ TNC.init = function () {
   TNC.events.onMapMove(map, TNC.app, markerLayerGroup, turfOverlayLayerGroup);
   TNC.events.resetFilter(map, TNC.app, markerLayerGroup, turfOverlayLayerGroup);
   TNC.events.changeUnits(TNC.app);
-  // TNC.events.changeData(TNC.app);
+  TNC.events.changeData(TNC.app);
   TNC.graph.buildHistogram(TNC.app, 'inputData.tnclands.markers.inBounds', 'derivedData', 'date_year', ['gis_ac']);
   //TNC.events.popupOnScroll(); 
 };
@@ -78234,7 +78258,7 @@ var mapbox = require('mapbox.js');
 var moment = require('moment');
 var omnivore = require('leaflet-omnivore');
 require('leaflet-hash');
-var turfWithin = require('turf-within');
+var turfWithin = require('turf-within'); 
 
 
 function setupMap (config) {

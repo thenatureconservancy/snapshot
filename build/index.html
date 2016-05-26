@@ -29,7 +29,7 @@
 
 <nav class="navbar navbar-default">
   <div class="container-fluid">
-    <h1><i class="fa fa-map-o"></i>Snapshot <sup>Beta</sup></h1> 
+    <h1><i class="fa fa-map-o"></i>Snapshot</h1> 
     <div class="btn-group">
     </div>
     <img src="img/logo45white.png" class="pull-right tnc-logo"/>
@@ -48,7 +48,6 @@
 
     <div id="results" class="col-xs-6 col-sm-6 col-md-5">
     <script id='template' type='text/ractive'>
-	
 
     <div id="summary-buttons" class="btn-group" role="group" aria-label="...">
       <a href="#summary" on-click='section-change' id="button-summary" class="btn btn-default {{#if appstate.activeTab === 'button-summary'}} active {{/if}}" aria-controls="home" role="button" data-toggle="tab">Summary</a>
@@ -76,6 +75,9 @@
             <h3>Options</h3>
             <p>Set units: <a id="english" href="#" on-click="unit-change">English</a> &nbsp; <a id="metric" href="#" on-click="unit-change">Metric</a></p>
             <p>Change data: <a id="completed" href="#" on-click="data-change">Completed</a> &nbsp; <a id="active" href="#" on-click="data-change">Active</a></p>
+
+            <p>Change network status: <a id="public" href="#" on-click="network-change">Public</a> &nbsp; <a id="private" href="#" on-click="network-change">TNC Network</a></p>
+
 <!--             <p>Projects tour: <a id="tour-yes" href="#" on-click="tour-change">Yes</a> &nbsp; <a id="tour-no" href="#" on-click="tour-change">No</a></p>
             <p>Change data: <a id="completed" href="#" on-click="data-change">Completed</a> &nbsp; <a id="active" href="#" on-click="data-change">Active</a></p>
 
@@ -179,6 +181,7 @@
       <div id="results-content" class="tab-content">
         <div role="tabpanel" class="tab-pane {{#if appstate.activeTab === 'button-summary'}} active {{/if}}" id="summary"> 
           {{#if appstate.activeTab === 'button-summary'}}
+              {{>summaryUnlocking}}
               {{>summaryLands}}
               {{>summaryCoastal}}
               {{>summaryFreshwater}}
@@ -207,6 +210,10 @@
                 	{{/if}}
                 </dt> <!-- Year from years array -->
                   {{#lookupProjectsByYear(derivedData.byYear, this):i}}
+                   {{#if this.dataname === 'unlocking'}}
+                      {{>cardUnlocking}}   
+                    {{/if}}
+
                     {{#if this.dataname === 'tnclands'}}
                       {{>cardLands}}   
                     {{/if}}
@@ -262,6 +269,10 @@
         <div role="tabpanel" class="tab-pane {{#if appstate.activeTab === 'button-details'}} active {{/if}}" id="details">
         {{#if appstate.activeTab === 'button-details'}}
           {{#appstate.activeDetails}}
+            {{#if dataname === 'unlocking'}}
+              {{>detailsUnlocking}}
+            {{/if}}
+
             {{#if dataname === 'tnclands'}}
               {{>detailsLands}}
             {{/if}}
@@ -310,5 +321,6 @@
 <script type="text/javascript" src="js/bundle.js"></script>
 <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js'></script>
 <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-minimap/v1.0.0/Control.MiniMap.js'></script> 
+<!-- <script src='../src/data/unlocking.js'></script>  -->
 </body>
 </html>

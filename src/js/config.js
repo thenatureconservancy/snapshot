@@ -253,6 +253,143 @@ var inputData = {
     },
     suppl_data: ''
   }
+    , unlocking: {
+    //src: 'data/tnc_lands_fee_ce_pt.geojson',
+    src: "http://dmajka.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM projecttable WHERE latitude <> 0 ORDER BY startdate DESC",     
+    datatype: 'geojson',      
+    name: 'Saving Great Rivers',
+    shortName: 'unlocking',
+    divId: 'unlocking-output',
+    countId: 'unlocking-count',
+    markerOptions: {
+      disableClusteringAtZoom: 3,
+      maxClusterRadius: 70,
+      markerIcon: 'water',
+      markerColor: 'AA4291'       
+    },
+    fields: {
+      uniqueID: 'cartodb_id',
+      date: 'startdate',
+      name: 'name',
+      name2: 'name',
+      abstract: 'briefdescription',
+      state: 'state',
+      country: 'countries', //none right now
+      overlayTable: 'extenttable',
+      overlayID: 'extentfeature'       
+    },
+    popupfield: 'name',
+    uniqueID: '',
+    template: {
+      summary: 
+        '<div id="unlocking" class="card-summary">' +
+          '<h3 class="unlocking"><img class="summary-icon" src="img/Water_Icon_SGR.png"> Saving Great Rivers</h3>' +
+            '<div class="row summary-row">' +
+              '<div class="col-xs-6 col-sm-6 summary-metric">' +
+                '<h4>Projects ({{inputData.unlocking.markers.complete._geojson.features.length}})</h4>' +
+                '<span class="summary-number">{{inputData.unlocking.markers.inBounds.length}}</span>' + 
+              '</div>' +
+
+              '<div class="col-xs-6 col-sm-6 summary-metric last">' +
+                '<h4 class="summary-units">{{appstate.units.distanceUnits}} Protected</h4>' +
+                // '<span class="summary-number">{{(Math.floor(sumAttribute(inputData.tnclands.markers.inBounds, "gis_ac")* appstate.units.areaConversion)).toLocaleString()}}</span>' +
+              '</div>' +
+            '</div>' +
+        '</div>',
+      card: 
+        '<dd id="{{unique_id}}" class="pos-left clearfix {{dataname}}-card" >' +
+          '<div class="circ unlocking"></div>' +
+          '<div class="time">{{#if date_year === "Invalid date"}} {{else}} {{date_short}}<br/>{{date_year}} {{/if}}</div>' +
+          '<div class="events">' +
+            '<div class="events-body project-card">' +
+              '<span class="project-date"></span>' +
+              '<span class="project-state">{{state}}</span>' +
+              '<h4 class="events-heading">{{name}}</h4>' +
+              '<p class="project-type">{{BriefDescription}}</p>' +
+              '<ul class="project-links">' +
+                '<li><a href="#" id="{{unique_id}}" on-click="show-popup"><i class="fa fa-map-marker"></i> Highlight on map</a></li>' + 
+                '<li><a href="#" id="{{unique_id}}" on-click="show-details"><i class="fa fa-table"></i> View details</a></li> ' +                        
+              '</ul>' +                    
+            '</div>' +
+          '</div>' +
+        '</dd>',
+      details:
+        '<div class="card-detail">' +
+          '<img class="details-icon" src="img/Water_Icon_SGR.png"> <h2 class="unlocking-detail">{{name}}</h2>' +
+          '<p>{{#if date_year === "Invalid date"}} Unknown year {{else}} {{date_short}}, {{date_year}} {{/if}} </p>' +
+          '<hr/>' +
+
+          '<p><a href="#" id="{{unique_id}}" on-click="show-popup"><i class="fa fa-map-marker"></i> Highlight on map</a> &nbsp; &nbsp; &nbsp; &nbsp; ' +
+          '<a href="#" id="{{unique_id}}" on-click="show-footprint"><i class="fa fa-map-o"></i> Show footprint</a></p>' +
+          '<hr/>' +
+
+          '<p>{{#if LongDescription}} {{LongDescription}} {{else}} {{briefdescription}} {{/if}}</p>' +
+
+
+            '<h3>Accomplishments</h3>' +
+          '{{#if Accomplishments}}' +            
+            '{{#each Accomplishments:i}} <p><strong>{{this.AccomplishmentDate}}:</strong> {{this.AccomplishmentText}} </p>{{/each}}' +        
+          '{{else}}' +
+          '<p>No accomplishments entered yet.</p>' +
+          '{{/if}}' +
+
+          '<h3>Measures of Success</h3>' + 
+          '{{#if Measures}}' +                           
+            '{{#each Measures:i}}' +
+              '<h4>{{BroadCategory}}</h4>' +
+                '<ul>' +
+                  '<li><strong>Broad course of action: </strong> {{BroadCourseOfAction}}</li>' +
+                  '<li><strong>PTI: </strong> {{PTI}}</li>' +
+                  '<li><strong>Value: </strong> {{Value}} {{Name}}</li>' +
+                  '<li><strong>Status: </strong> {{Status}}</li>' +
+                '</ul>' + 
+              '{{/each}}' +
+            '{{else}}' +
+            '<p>No measures entered yet.</p>' +
+            '{{/if}}'+
+
+          '{{#if networkStatus === "private"}}' +
+            '<h3>Fundraising Needs</h3>' + 
+              '{{#if FundraisingNeeds}}' +
+                '<table class="table table-striped table-condensed table-responsive">' +
+                  '<thead>' +
+                    '<tr> <th>Year</th> <th>Amount</th> <th>Type</th></tr>' +
+                  '</thead>' +
+                    '<tbody>' +                
+                      '{{#each FundraisingNeeds:i}} <tr> <td>{{FiscalYear}}</td> <td>${{DollarAmount.toLocaleString()}}</td> <td>{{Type}}</td></tr> {{/each}}' +
+                      '<tr> <td>Total</td> <td>${{sumAttributeObject(FundraisingNeeds, "DollarAmount").toLocaleString()}}</td> <td></td></tr>' +
+                    '</tbody>' +
+                '</table>' +
+              '{{else}}' +
+              '<p>No fundraising needs entered yet</p>' +
+              '{{/if}}' +
+          '{{/if}}' +
+
+
+          '<h3>Business Units</h3>' +
+          '<ul>'+
+            '{{#BusinessUnits}}<li>{{this}}</li>{{/BusinessUnits}}'+                                                        
+          '</ul>' +
+          // '<hr/>' +
+          '{{#if networkStatus === "private"}}' +
+          '<span class="edit-project pull-right"><a href="http://hubmvcdev.tnc.org/HubPrototype/Project/Update/{{projectid}}" target="_blank"><i class="fa fa-pencil-square-o"></i> Edit project</a></span>' +
+          '{{/if}}' +
+        '</div>',
+      popup: function (feature) {
+          // console.log(feature);
+          var template = '<div class="popup-title popup-unlocking">'+feature.properties.name+'</div>' + 
+        '<div class="popup-body">'+
+          '<p>'+feature.properties.briefdescription + '</p>' +
+          '<ul class="popup-links">'+
+            '<li><a href="#" class="popup-zoom-footprint"><i class="fa fa-map-o"></i> Show footprint</a></li>'+
+            '<li><a href="#" class="popup-details"><i class="fa fa-table"></i> View details</a></li>' +
+          '</ul>' +
+        '</div>';
+          return template;
+      }
+    },
+    suppl_data: ''
+  }
   , freshwater: {
     //src: 'data/tnc_lands_fee_ce_pt.geojson',
     src: "http://dmajka.cartodb.com/api/v2/sql?format=GeoJSON&q=SELECT * FROM freshwater_accomplishments ORDER BY completion_date DESC",

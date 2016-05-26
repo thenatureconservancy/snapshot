@@ -26,6 +26,7 @@ span.amp {font-style: italic; font-family: "Goudy old style", palatino; font-wei
 .fa-map-o {color: #A0D468; font-size: 16px; margin-right: 3px; margin-left: 6px;}
 .fa-table {color: #666; margin-right: 5px;}
 .fa-search-plus {color: coral; font-size: 16px; margin-right: 5px;}
+.fa-pencil-square-o {color: coral;}
 
 /* Header & Nav  -------------------------------- */
 nav.navbar-default {background: #4D5557; color: #fff; border: 0; border-radius: 0; min-height: 20px; border-bottom: 1px solid #fff;}
@@ -156,6 +157,9 @@ img.summary-icon {width: 10%;}
 #results-content  .ag {color: #fff; background: #f3901d; padding: 0px 10px; margin-top: -10px; margin-left: -10px; margin-right: -10px; border-radius: 3px 3px 0 0;}
 #results-content  .cities {color: #fff; background: #f3901d; padding: 5px 10px; margin-top: -10px; margin-left: -10px; margin-right: -10px; border-radius: 3px 3px 0 0;}
 #results-content  .climate {color: #fff; background: #90214a; padding: 5px 10px; margin-top: -10px; margin-left: -10px; margin-right: -10px; border-radius: 3px 3px 0 0;}
+#results-content  .unlocking {color: #fff; background: #762D64; padding:  10px 5px 5px; margin-top: -10px; margin-left: -10px; margin-right: -10px; border-radius: 3px 3px 0 0;}
+
+
 .card-summary {float: left; background: #fff; width: 100%; padding: 10px 10px 0; border-radius: 5px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc;
                 margin-top: 20px; margin-bottom: 10px;}
 
@@ -183,6 +187,7 @@ img.graph-no-pad {padding: 0 0;}
 #details h2.lands-detail {color: #47aa42;}
 #details h2.freshwater-detail {color: #009dc9;}  
 img.details-icon {width: 16%; float: left; padding: 5px 10px 5px 0;}
+.edit-project {border-top: 1px solid #ccc; margin-top: 10px;}
 
 
 /* Accomplishments */
@@ -243,6 +248,8 @@ dd.active-project div.events {background: #FDFDF4;}
 .tnc-lands div {background-color: rgba(141, 191, 88, 0.7);}*/
 .tnclands {background-color: rgba(71,170,66, 0.7);}
 .tnclands div {background-color: rgba(71,170,66, 0.7);}
+.unlocking {background-color: rgba(169, 65, 144, 0.5);}
+.unlocking div {background-color: rgba(169, 65, 144, 0.5);}
 
 /* map popups */
 .leaflet-popup-content-wrapper {padding: 0 0 1px 0;}
@@ -265,6 +272,7 @@ ul.popup-links li {margin-bottom: 5px;}
 .popup-ag {background: #f3901d; }
 .popup-coastal {background: #005387;}
 .popup-freshwater {background: #009ECB;}
+.popup-unlocking {background: #762D64;}
 
 /* UI  -------------------------------- */
 #marker-controls {position: absolute; top: 20px; right: 20px; font-size: 14px; line-height: 1em; background: #fff; z-index: 999; padding: 5px;}

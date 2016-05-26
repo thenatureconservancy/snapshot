@@ -2,8 +2,8 @@ var mapbox = require('mapbox.js');
 var moment = require('moment');
 var omnivore = require('leaflet-omnivore');
 require('leaflet-hash');
-var turfWithin = require('turf-within'); 
-
+var turfWithin = require('turf-within');
+var unlocking = require('../data/payload.json');
 
 function setupMap (config) {
 	L.mapbox.accessToken = config.token;
@@ -59,6 +59,10 @@ function _normalizeAttributes(layer, inputDataset) {
   }
 
   feature.properties.unique_id = dataName + feature.properties[inUniqueID].toString(); 
+  if (feature.properties.dataname === 'unlocking') {
+    var joinProps = _.find(unlocking.value, { 'ProjectId': feature.properties.projectid});
+    _.assign(feature.properties, joinProps);
+  }
 };
 
 
@@ -270,7 +274,7 @@ function onMapUpdate (map, ractive, markerLayerGroup){
   });
 
   //refactor this to abstract it so markers get concatenated w/o specifying marker name. 
-  ractive.set('derivedData.combinedMarkersInBounds', _.concat(ractive.get('inputData.tnclands.markers.inBounds'), ractive.get('inputData.coastalprojects.markers.inBounds'), ractive.get('inputData.freshwater.markers.inBounds')));
+  ractive.set('derivedData.combinedMarkersInBounds', _.concat(ractive.get('inputData.tnclands.markers.inBounds'), ractive.get('inputData.unlocking.markers.inBounds'), ractive.get('inputData.coastalprojects.markers.inBounds'), ractive.get('inputData.freshwater.markers.inBounds')));
   var markersInBounds = _.orderBy(ractive.get('derivedData.combinedMarkersInBounds'), ['date_n'],['desc']);
  
   function pushInBounds(layer){

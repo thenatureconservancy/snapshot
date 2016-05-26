@@ -1,5 +1,6 @@
 var omnivore = require('leaflet-omnivore');
-TNC = {};
+var $ = require('jquery');
+var TNC = {};
 TNC.map = require('./map.js');
 TNC.graph = require('./graph.js');
 TNC.config = require('./config.js');
@@ -338,6 +339,14 @@ function changeData (ractive) {
   })
 };
 
+function changeNetworkStatus (ractive) {
+  ractive.on('network-change', function (event) {
+    var buttonid = event.node.id;
+    console.log(buttonid);
+    ractive.set('networkStatus', buttonid);
+  })
+};
+
 
 function popupOnScroll (markerLayerGroup) {
 	var narrative = document.getElementById('results'),
@@ -380,7 +389,19 @@ function pageUpdate (ractive) {
   });    	
 };
 
-
+function testNetworkStatus (ractive) {
+  jQuery.ajax({
+      url: 'http://mnspatial.tnc.org/projects/spacer.gif',
+      success: function(){
+        ractive.set('networkStatus', 'private');               
+       },
+      error: function(){
+        ractive.set('networkStatus', 'public');
+        },
+      timeout: 1000,
+      async: true
+   });
+};
 
 
 module.exports = {
@@ -399,6 +420,8 @@ module.exports = {
 	sectionChange: sectionChange,
 	changeUnits: changeUnits,
 	changeData: changeData,
+  changeNetworkStatus: changeNetworkStatus,
 	popupOnScroll: popupOnScroll,
-	pageUpdate: pageUpdate
+	pageUpdate: pageUpdate,
+  testNetworkStatus
 }

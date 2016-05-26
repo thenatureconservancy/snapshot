@@ -3,7 +3,6 @@ var ractive = require('ractive');
 window.$ = window.jQuery = require('jquery');
 var bootstrap = require('bootstrap'); 
 //var bootflat = require('bootflat');
-
 // require('leaflet.markercluster');
 //var miniMap = require('leaflet-minimap'); //currently having probs requiring this.
 
@@ -11,9 +10,8 @@ var _ = require('lodash');
 var moment = require('moment');
 var select2 = require('select2');
 
-
 // app modules
-var TNC = {};
+TNC = {};
 TNC.map = require('./map.js');
 TNC.config = require('./config.js');
 
@@ -42,18 +40,22 @@ TNC.app = ractive({
   el: '#results',
   template: '#template',
   partials: {
+    summaryUnlocking: TNC.config.inputData.unlocking.template.summary,   
     summaryLands: TNC.config.inputData.tnclands.template.summary,
     summaryCoastal: TNC.config.inputData.coastalprojects.template.summary,
     summaryFreshwater: TNC.config.inputData.freshwater.template.summary,
+    cardUnlocking: TNC.config.inputData.unlocking.template.card,     
     cardLands: TNC.config.inputData.tnclands.template.card, 
     cardCoastal: TNC.config.inputData.coastalprojects.template.card,
-    cardFreshwater: TNC.config.inputData.freshwater.template.card,      
+    cardFreshwater: TNC.config.inputData.freshwater.template.card,
+    detailsUnlocking: TNC.config.inputData.unlocking.template.details,          
     detailsLands: TNC.config.inputData.tnclands.template.details,
     detailsCoastal: TNC.config.inputData.coastalprojects.template.details, 
     detailsFreshwater: TNC.config.inputData.freshwater.template.details                
   },
   data: {
     appstate: {
+      networkStatus: 'public', // public, private
       activeTab: 'button-summary', // summary, projects, or details
       activeDetails: null,
       projectScope: 'completed', // past, active, fundraising.
@@ -102,6 +104,13 @@ TNC.app = ractive({
 	      }
 	    }
 	    return Math.floor(itemSum);     	
+    },
+
+    sumAttributeObject: function (array, key) {
+      console.log(array);
+      console.log(key);
+      console.log(_.sumBy(array, key));
+      return _.sumBy(array, key);
     },
 
     sumProjectAttributes: function(fieldArray) {
@@ -198,7 +207,7 @@ TNC.app = ractive({
       console.log('yeah');
     }
   } 
-});
+}); 
 
 
 
@@ -235,7 +244,9 @@ TNC.init = function () {
   TNC.events.resetFilter(map, TNC.app, markerLayerGroup, turfOverlayLayerGroup);
   TNC.events.changeUnits(TNC.app);
   TNC.events.changeData(TNC.app);
+  TNC.events.changeNetworkStatus(TNC.app);  
   TNC.graph.buildHistogram(TNC.app, 'inputData.tnclands.markers.inBounds', 'derivedData', 'date_year', ['gis_ac']);
+  TNC.events.testNetworkStatus(TNC.app); 
   //TNC.events.popupOnScroll(); 
 };
 
